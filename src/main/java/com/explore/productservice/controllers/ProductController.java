@@ -5,6 +5,8 @@ import com.explore.productservice.models.Product;
 import com.explore.productservice.services.ProductService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class ProductController {
 
@@ -13,7 +15,8 @@ public class ProductController {
         this.productService = productService;
     }
     @GetMapping("/products")
-    public void getallProducts(){
+    public List<Product> getAllProducts(){
+       return productService.getAllProducts();
 
     }
 
