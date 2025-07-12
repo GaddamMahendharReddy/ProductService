@@ -3,6 +3,7 @@ package com.explore.productservice.services;
 import com.explore.productservice.dtos.CreateProductRequestDto;
 import com.explore.productservice.dtos.FakeStoreCreateProductDto;
 import com.explore.productservice.dtos.FakeStoreProductDto;
+import com.explore.productservice.exceptions.ProductNotFoundException;
 import com.explore.productservice.models.Category;
 import com.explore.productservice.models.Product;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,7 @@ public class FakeStoreProductService implements ProductService {
         this.restTemplate = restTemplate;
     }
 
-    public Product getProductDetails(Long id){
+    public Product getProductDetails(Long id) throws ProductNotFoundException {
 //       FakeStoreProductDto responseDto=
 //               restTemplate.getForObject(
 //                       "https://fakestoreapi.com/products"+id,
@@ -39,6 +41,14 @@ public class FakeStoreProductService implements ProductService {
        else if(responseEntity.getStatusCode()== HttpStatus.valueOf(500)){
            //tell fe that be is not  working currently
        }
+
+       FakeStoreProductDto responseBody=responseEntity.getBody();
+       if(responseBody==null){
+           throw new ProductNotFoundException("Product not found");
+       }
+
+
+
        return responseEntity.getBody().toProduct();
 
 
