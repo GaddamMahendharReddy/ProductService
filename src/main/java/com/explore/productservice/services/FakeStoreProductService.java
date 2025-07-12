@@ -5,6 +5,9 @@ import com.explore.productservice.dtos.FakeStoreCreateProductDto;
 import com.explore.productservice.dtos.FakeStoreProductDto;
 import com.explore.productservice.models.Category;
 import com.explore.productservice.models.Product;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -22,12 +25,21 @@ public class FakeStoreProductService implements ProductService {
     }
 
     public Product getProductDetails(Long id){
-       FakeStoreProductDto responseDto=
-               restTemplate.getForObject(
-                       "https://fakestoreapi.com/products"+id,
-                       FakeStoreProductDto.class);
+//       FakeStoreProductDto responseDto=
+//               restTemplate.getForObject(
+//                       "https://fakestoreapi.com/products"+id,
+//                       FakeStoreProductDto.class);
 
-       return responseDto.toProduct();
+        ResponseEntity<FakeStoreProductDto> responseEntity=restTemplate
+                .getForEntity("https://fakestoreapi.com/products"+id,FakeStoreProductDto.class);
+
+       if(responseEntity.getStatusCode()== HttpStatusCode.valueOf(404)){
+           //show some error to fe
+       }
+       else if(responseEntity.getStatusCode()== HttpStatus.valueOf(500)){
+           //tell fe that be is not  working currently
+       }
+       return responseEntity.getBody().toProduct();
 
 
     }
